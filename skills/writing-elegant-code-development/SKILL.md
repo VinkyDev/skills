@@ -1,18 +1,20 @@
 ---
-name: writing-elegant-code
-description: Write and refactor simple, elegant, modular, type-safe code for production systems where compatibility, rollout safety, and external contracts may matter. Use when implementing features, fixing root causes, reviewing code quality, evolving APIs or data models, or selecting libraries in a live or production-bound project.
+name: writing-elegant-code-development
+description: Write and refactor simple, final, modular, type-safe code for projects still under active development where breaking changes are acceptable. Use when implementing or refactoring pre-production systems, prototypes, internal development branches, or unreleased APIs and schemas; remove backward compatibility, obsolete paths, fallbacks, and migrations instead of preserving them.
 ---
 
-# Writing Elegant Code for Production
+# Writing Elegant Code for Development
 
-Converge on the simplest durable design that meets current requirements while protecting verified external contracts and safe production operation.
+Move directly to the final design. Assume breaking changes are acceptable and remove every obsolete state rather than carrying it forward.
+
+Do not use this skill when deployed consumers, persisted production data, public contracts, or staged rollouts require compatibility. Use `writing-elegant-code` instead.
 
 ## Working method
 
 - Fix the root cause at the correct abstraction instead of adding a local patch.
-- Start with the smallest end-to-end change that works, then add only capabilities required now.
+- Start with the smallest end-to-end implementation that works, then add only capabilities required now.
 - Complete each layer before adding the next; never replace a working system with unfinished complexity.
-- Keep modified components modular, responsibilities focused, and concerns clearly separated.
+- Keep components modular, responsibilities focused, and concerns clearly separated.
 - Finish the change across every abstraction it touches while leaving unrelated areas intact.
 - Make architectural decisions for the long term. Do not introduce a stopgap intended to be replaced later.
 
@@ -20,10 +22,11 @@ Converge on the simplest durable design that meets current requirements while pr
 
 - Choose the fewest concepts, paths, configuration options, and extension points that fully satisfy current requirements.
 - Avoid speculative abstractions, indirection, and flexibility without a concrete use case.
-- Remove superseded internal logic in the same change when doing so is operationally safe.
-- Preserve backward compatibility only for a verified external contract, deployed consumer, persisted data, or staged rollout requirement.
-- Isolate required compatibility code from the normal path, define its removal condition, and do not let it shape the new core design.
-- Use explicit, reversible migrations when production state cannot change atomically. Do not disguise permanent duplication as a migration.
+- Do not preserve backward compatibility.
+- Remove obsolete APIs, schemas, implementations, configuration, call sites, tests, and documentation in the same change.
+- Replace old paths outright. Do not add adapters, compatibility branches, deprecated aliases, dual reads or writes, fallbacks, feature flags, or migration layers.
+- Update all in-repository consumers to the final interface immediately.
+- Keep one canonical representation and one normal execution path.
 
 ## Comments
 
@@ -53,9 +56,10 @@ Before finishing, verify every modified file and affected path:
 
 - The implementation solves the root cause and works end to end.
 - Every new concept and logic path serves a current requirement.
-- Superseded code is removed unless production safety or a verified contract requires it.
-- Every retained compatibility path has a clear boundary and removal condition.
+- The old implementation and all obsolete paths are gone.
+- No adapters, compatibility branches, deprecated aliases, fallbacks, temporary flags, or migrations remain.
+- Every in-repository consumer, test, fixture, and document uses the final design.
 - Every comment passes the why test.
 - TypeScript contains no `any`, and every `unknown` is narrowed before use.
 - Existing dependencies were checked before adding or reimplementing functionality.
-- Relevant type checks, lint checks, tests, and migration or rollout checks pass.
+- Relevant type checks, lint checks, and tests pass.

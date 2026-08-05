@@ -1,36 +1,95 @@
 # Vinky Skills
 
-Agent skills for writing simple, elegant, type-safe code.
+English | [简体中文](README.zh-CN.md)
 
-面向简洁、优雅、类型安全代码的 Agent Skills。
+Agent instructions for writing simple, elegant, modular, and type-safe code.
 
-## Skills
+Two variants are provided. Choose the one that matches the lifecycle and compatibility requirements of your project.
+
+## Variants
 
 ### `writing-elegant-code`
 
-Converges code toward a final design that is concise, elegant, and type-safe. Use when implementing or refactoring code, reviewing code quality, or selecting libraries.
+For production systems and production-bound projects.
 
-将代码收敛到简洁、优雅且类型安全的最终设计。适用于编写/重构代码、评审代码质量、选择依赖库。
+This variant converges code toward the simplest durable design while protecting verified external contracts, persisted production data, and rollout safety. It retains compatibility or migrations only when operationally required, keeps them outside the new core design, and requires an explicit removal condition.
 
-It covers four areas / 覆盖四个方向：
+Choose it for:
 
-- **Comments / 注释** — Prefer clear naming and decomposition; comment only the why, never the what.  
-  优先用拆分与命名自解释；只写解释「为什么」的必要注释，不重复说明「做什么」。
-- **Design / 设计** — Converge in one thorough change; avoid intermediate layers, compatibility branches, and patch-style fixes.  
-  一次彻底改到位；少写中间/过度逻辑、兼容性逻辑与补丁式修改。
-- **Types / 类型** — Keep TypeScript type-safe; never use `any`, prefer `unknown` and narrow before use.  
-  尽可能保证类型安全；TypeScript 始终不写 `any`，必要时用 `unknown` 并在使用前缩窄。
-- **Libraries / 库** — Prefer mature, modern libraries at their latest compatible versions over reinventing the wheel.  
-  成熟实践优先用库实现；优先现代库及其最新兼容版本，避免重复造轮子。
+- live or production-bound applications;
+- public or externally consumed APIs;
+- persisted production data and schema evolution;
+- changes that require staged or reversible rollout;
+- general implementation, refactoring, review, and dependency selection.
 
-### `writing-elegant-code-cn`
+Files:
 
-Chinese version of the same skill. Invoke by name when you want Chinese instructions.
+- Skill: [`skills/writing-elegant-code/SKILL.md`](skills/writing-elegant-code/SKILL.md)
+- AGENTS.md template: [`docs/writing-elegant-code/AGENTS.md`](docs/writing-elegant-code/AGENTS.md)
 
-同 skill 的中文版本。
+### `writing-elegant-code-development`
 
-## Install / 安装
+For projects still under active development where breaking changes are acceptable.
+
+This variant removes backward compatibility and obsolete paths, replaces old interfaces outright, updates every in-repository consumer, and leaves no adapters, fallbacks, deprecated aliases, temporary feature flags, or migration layers behind.
+
+Choose it for:
+
+- pre-production projects;
+- prototypes and unreleased systems;
+- internal development branches;
+- unreleased APIs, schemas, and data models;
+- refactors where the repository can move atomically to the final design.
+
+Do not choose this variant when deployed consumers, persisted production data, public contracts, or staged rollouts require compatibility. Choose `writing-elegant-code` instead.
+
+Files:
+
+- Skill: [`skills/writing-elegant-code-development/SKILL.md`](skills/writing-elegant-code-development/SKILL.md)
+- AGENTS.md template: [`docs/writing-elegant-code-development/AGENTS.md`](docs/writing-elegant-code-development/AGENTS.md)
+
+## Installation
+
+Choose one of the following installation methods.
+
+### Option 1: Install as a Skill
+
+Run the Skills installer and select the variant appropriate for your project:
 
 ```bash
 npx skills@latest add VinkyDev/skills
 ```
+
+This method keeps the instructions as a reusable agent skill that can be invoked when needed.
+
+### Option 2: Install as project instructions
+
+Copy the selected template to `AGENTS.md` at the root of your project.
+
+For production and production-bound projects:
+
+```bash
+cp docs/writing-elegant-code/AGENTS.md /path/to/your-project/AGENTS.md
+```
+
+For projects still under active development where breaking changes are acceptable:
+
+```bash
+cp docs/writing-elegant-code-development/AGENTS.md /path/to/your-project/AGENTS.md
+```
+
+If the target project already has an `AGENTS.md`, merge the selected template into it instead of overwriting existing project-specific instructions. This method applies the rules automatically whenever an agent works in that project.
+
+## Shared principles
+
+Both variants require agents to:
+
+- solve root causes at the correct abstraction;
+- build the smallest working end-to-end change and grow it in complete layers;
+- avoid speculative abstraction, configuration, and indirection;
+- keep components modular and concerns separated;
+- write comments only to explain why;
+- maintain precise types and never use TypeScript `any`;
+- inspect existing dependencies, documentation, and types before adding packages or reimplementing common functionality;
+- prefer durable architecture over temporary solutions;
+- run relevant type checks, lint checks, and tests before finishing.
